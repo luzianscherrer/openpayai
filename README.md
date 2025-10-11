@@ -28,5 +28,5 @@ npx hardhat node
 
 ```
 cd contract
-npx hardhat ignition deploy --network localhost ignition/modules/Counter.ts
+npx hardhat ignition deploy --network localhost ignition/modules/OpenPayAI.ts
 ```

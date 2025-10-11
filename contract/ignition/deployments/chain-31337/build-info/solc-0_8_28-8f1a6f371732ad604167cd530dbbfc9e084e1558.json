@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-8f1a6f371732ad604167cd530dbbfc9e084e1558",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/OpenPayAI.sol": "project/contracts/OpenPayAI.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/OpenPayAI.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.28;\n\ncontract OpenPayAI {\n    struct Entry {\n        uint256 price;\n        address dataOwner;\n    }\n    address public immutable owner;\n    mapping(bytes32 => Entry) public entries;\n    mapping(address => mapping(bytes32 => bool)) public licenses;\n\n    constructor(address _owner) {\n        owner = _owner;\n    }\n\n    modifier isOwner() {\n        require(msg.sender == owner, \"Not the Owner\");\n        _;\n    }\n\n    function withdraw() external isOwner {\n        uint256 balance = address(this).balance;\n        require(balance > 0, \"No funds to withdraw\");\n\n        (bool success, ) = payable(owner).call{value: balance}(\"\");\n        require(success, \"Withdrawal failed\");\n    }\n\n    receive() external payable {}\n}\n"
+      }
+    }
+  }
+}
