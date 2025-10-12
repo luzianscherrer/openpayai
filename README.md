@@ -4,16 +4,34 @@
 
 This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglobal.com/events/ethonline2025).
 
+### Used Sponsor Technology
+
+- Nomic Foundation: [Hardhat 3](https://hardhat.org)
+- Blockscout: [Autoscout](https://deploy.blockscout.com)
+
 ## Development Setup
 
 ### Directory Structure
 
-- `contract/contracts`: Smart Contracts
+| Directory            | Description     |
+| -------------------- | --------------- |
+| `contract/contracts` | Smart Contracts |
+| `code`               | Tools           |
 
 ### Used Software Versions
 
 - Node 22.12.0
 - NPX 10.9.0
+- Python 3.13.2
+
+### Python Setup
+
+```
+cd code
+python3 -m venv venv
+source ./venv/bin/activate
+pip install -r requirements.txt
+```
 
 ### Blockscout / ngrok Config
 
