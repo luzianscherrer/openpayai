@@ -10,6 +10,11 @@ contract OpenPayAI {
     mapping(bytes32 => Entry) public entries;
     mapping(address => mapping(bytes32 => bool)) public licenses;
 
+    event EntryAdded(bytes32 indexed hash, uint256 price, address dataOwner);
+    event PriceUpdated(bytes32 indexed hash, uint256 newPrice);
+    event LicenseBought(address indexed buyer, bytes32 indexed hash);
+    event Withdrawal(address indexed owner, uint256 amount);
+
     constructor(address _owner) {
         owner = _owner;
     }
@@ -31,6 +36,8 @@ contract OpenPayAI {
         require(entries[hash].dataOwner == address(0), "Entry already exists");
 
         entries[hash] = Entry({price: price, dataOwner: dataOwner});
+
+        emit EntryAdded(hash, price, dataOwner);
     }
 
     function getEntry(bytes32 hash) external view returns (uint256, address) {
@@ -51,6 +58,8 @@ contract OpenPayAI {
         require(success, "Transfer failed");
 
         licenses[msg.sender][hash] = true;
+
+        emit LicenseBought(msg.sender, hash);
     }
 
     function updatePrice(
@@ -60,6 +69,8 @@ contract OpenPayAI {
         require(entries[hash].dataOwner != address(0), "Entry does not exist");
 
         entries[hash].price = newPrice;
+
+        emit PriceUpdated(hash, newPrice);
     }
 
     function withdraw() external isOwner {
@@ -68,6 +79,8 @@ contract OpenPayAI {
 
         (bool success, ) = payable(owner).call{value: balance}("");
         require(success, "Withdrawal failed");
+
+        emit Withdrawal(owner, balance);
     }
 
     receive() external payable {}
