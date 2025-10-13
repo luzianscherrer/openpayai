@@ -65,3 +65,13 @@ npx hardhat node
 cd contract
 npx hardhat ignition deploy --network localhost ignition/modules/OpenPayAI.ts
 ```
+
+### Run the Webserver
+
+```
+cd code
+source venv/bin/activate
+fastapi dev webserver.py
+```
+
+Then visit http://localhost:8000
