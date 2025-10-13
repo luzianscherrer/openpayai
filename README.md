@@ -21,7 +21,7 @@ This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglo
 ### Used Software Versions
 
 - Node 22.12.0
-- NPX 10.9.0
+- npx 10.9.0
 - Python 3.13.2
 
 ### Python Setup
