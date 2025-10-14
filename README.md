@@ -24,6 +24,13 @@ This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglo
 - npx 10.9.0
 - Python 3.13.2
 
+### Node Setup
+
+```
+cd contract
+npm install
+```
+
 ### Python Setup
 
 ```

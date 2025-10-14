@@ -1,0 +1,39 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-5483bc310be2d83b7b29c2638c7043e8d48e240a",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "userSourceNameMap": {
+    "contracts/OpenPayAI.sol": "project/contracts/OpenPayAI.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/OpenPayAI.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\npragma solidity ^0.8.28;\n\ncontract OpenPayAI {\n    struct Entry {\n        uint256 price;\n        address dataOwner;\n    }\n    address public immutable owner;\n    mapping(bytes32 => Entry) public entries;\n    mapping(address => mapping(bytes32 => bool)) public licenses;\n\n    event EntryAdded(bytes32 indexed hash, uint256 price, address dataOwner);\n    event PriceUpdated(bytes32 indexed hash, uint256 newPrice);\n    event LicenseBought(address indexed buyer, bytes32 indexed hash);\n    event Withdrawal(address indexed owner, uint256 amount);\n\n    constructor(address _owner) {\n        owner = _owner;\n    }\n\n    modifier isOwner() {\n        require(msg.sender == owner, \"Not the Owner\");\n        _;\n    }\n    modifier isDataOwner(bytes32 hash) {\n        require(entries[hash].dataOwner == msg.sender, \"Not the data owner\");\n        _;\n    }\n\n    function addEntry(\n        bytes32 hash,\n        uint256 price,\n        address dataOwner\n    ) external isOwner {\n        require(entries[hash].dataOwner == address(0), \"Entry already exists\");\n\n        entries[hash] = Entry({price: price, dataOwner: dataOwner});\n\n        emit EntryAdded(hash, price, dataOwner);\n    }\n\n    function getEntry(bytes32 hash) external view returns (uint256, address) {\n        require(entries[hash].dataOwner != address(0), \"Entry does not exist\");\n\n        Entry memory entry = entries[hash];\n        return (entry.price, entry.dataOwner);\n    }\n\n    function buyLicense(bytes32 hash) external payable {\n        require(entries[hash].dataOwner != address(0), \"Entry does not exist\");\n        require(msg.value >= entries[hash].price, \"Insufficient funds\");\n\n        address dataOwner = entries[hash].dataOwner;\n        uint256 price = entries[hash].price;\n\n        (bool success, ) = dataOwner.call{value: price}(\"\");\n        require(success, \"Transfer failed\");\n\n        licenses[msg.sender][hash] = true;\n\n        emit LicenseBought(msg.sender, hash);\n    }\n\n    function updatePrice(\n        bytes32 hash,\n        uint256 newPrice\n    ) external isDataOwner(hash) {\n        require(entries[hash].dataOwner != address(0), \"Entry does not exist\");\n\n        entries[hash].price = newPrice;\n\n        emit PriceUpdated(hash, newPrice);\n    }\n\n    function withdraw() external isOwner {\n        uint256 balance = address(this).balance;\n        require(balance > 0, \"No funds to withdraw\");\n\n        (bool success, ) = payable(owner).call{value: balance}(\"\");\n        require(success, \"Withdrawal failed\");\n\n        emit Withdrawal(owner, balance);\n    }\n\n    receive() external payable {}\n}\n"
+      }
+    }
+  }
+}
