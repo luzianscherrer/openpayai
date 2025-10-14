@@ -13,10 +13,11 @@ This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglo
 
 ### Directory Structure
 
-| Directory            | Description     |
-| -------------------- | --------------- |
-| `contract/contracts` | Smart Contracts |
-| `code`               | Tools           |
+| Directory            | Description              |
+| -------------------- | ------------------------ |
+| `contract/contracts` | Smart Contracts          |
+| `code`               | Tools                    |
+| `webroot`            | Webserver Root Directory |
 
 ### Used Software Versions
 
