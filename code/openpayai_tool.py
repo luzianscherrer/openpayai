@@ -32,6 +32,39 @@ contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 account = web3.eth.account.from_key(PRIVATE_KEY)
 
 
+def generate_openpayai(directory: str, price: float, wallet: str):
+    path = Path(directory).resolve()
+    if not path.exists() or not path.is_dir():
+        raise ValueError(f"Not a valid directory: {directory}")
+
+    random_uuid = uuid.uuid4().bytes
+    digest = hashlib.sha256(random_uuid).hexdigest()
+    token = f"0x{digest}"
+
+    file_path = path / ".openpayai"
+    file_path.write_text(token, encoding="utf-8")
+
+    tx = contract.functions.addEntry(
+        token, Web3.to_wei(price, "ether"), wallet
+    ).build_transaction(
+        {
+            "from": account.address,
+            "nonce": web3.eth.get_transaction_count(account.address),
+            "gas": 300000,
+            "gasPrice": web3.eth.gas_price,
+        }
+    )
+    signed_tx = web3.eth.account.sign_transaction(tx, PRIVATE_KEY)
+    tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)
+    receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
+
+    print(f"Path: {file_path}")
+    print(f"OpenPayAI identifier: {token}")
+    print(f"Price: {price}")
+    print(f"Data owner: {wallet}")
+    print(f"Transaction {receipt.transactionHash.hex()}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Enable OpenPayAI for a given directory"
@@ -49,7 +82,7 @@ def main():
     args = parser.parse_args()
 
     try:
-        pass
+        generate_openpayai(args.directory, args.price, args.wallet)
     except Exception as e:
         print(f"Error: {e}")
 
