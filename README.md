@@ -42,7 +42,11 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env`.
+Edit `.env` to set:
+
+- `OPA_TOOL_PRIVATE_KEY`
+- `AI_AGENT_PRIVATE_KEY`
+- `OPENAI_KEY`.
 
 ### Blockscout / ngrok Config
 
@@ -86,3 +90,19 @@ fastapi dev webserver.py
 ```
 
 Then visit http://localhost:8000
+
+### Run the AI Agent
+
+```
+cd code
+source venv/bin/activate
+python ai_agent.py
+```
+
+### Ask AI Agent for Summary of OpenPayAI-enabled URL
+
+Prompt:
+
+```
+Please summarize the story on the website http://localhost:8000/crane in one sentence
+```
