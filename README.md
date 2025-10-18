@@ -99,10 +99,40 @@ source venv/bin/activate
 python ai_agent.py
 ```
 
+### Ask AI Agent for Summary
+
+Prompt:
+
+```
+Please summarize the story on the website http://localhost:8000/cat in one sentence
+```
+
+### Enable OpenPayAI for an URL
+
+```
+cd code
+source venv/bin/activate
+./openpayai_tool.py --price 0.01 --wallet 0xdAdaFaC167E4aEC1F40F71BBac7949c9Ee920F14 ../webroot/crane/
+```
+
+### Verify OpenPayAI protection
+
+```
+curl -I -H "User-Agent: AI-Agent-Crawler" http://localhost:8000/crane/
+```
+
 ### Ask AI Agent for Summary of OpenPayAI-enabled URL
 
 Prompt:
 
 ```
 Please summarize the story on the website http://localhost:8000/crane in one sentence
+```
+
+## Other Useful Commands
+
+### Observe All Traffic
+
+```
+sudo tcpdump -i any -s 0 -A 'tcp port 8000'
 ```
