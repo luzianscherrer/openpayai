@@ -55,7 +55,7 @@ contract OpenPayAI {
         return (entry.price, entry.dataOwner);
     }
 
-    function buyLicense(bytes32 hash) external payable {
+    function buyLicense(bytes32 hash) external {
         require(entries[hash].dataOwner != address(0), "Entry does not exist");
 
         Entry memory entry = entries[hash];
