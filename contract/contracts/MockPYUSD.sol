@@ -10,7 +10,6 @@ contract MockPYUSD is Initializable, ERC20Upgradeable {
         _disableInitializers();
     }
 
-    // The "constructor" logic now lives here
     function initialize(
         uint256 initialSupply,
         address owner
