@@ -14,8 +14,9 @@ This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglo
 
 ### Used Sponsor Technology
 
-- Nomic Foundation: [Hardhat 3](https://hardhat.org)
-- Blockscout: [Autoscout](https://deploy.blockscout.com)
+- PayPal: [PYUSD](https://github.com/paxosglobal/pyusd-contract) - Stable license prices independent of volatile cryptocurrency exchange rates.
+- Nomic Foundation: [Hardhat 3](https://hardhat.org) - State of the art Solidity development.
+- Blockscout: [Autoscout](https://deploy.blockscout.com) - Observe and verify what is happening on-chain.
 
 ## Technical Description
 
@@ -31,7 +32,7 @@ positional arguments:
 
 options:
   -h, --help       show this help message and exit
-  --price PRICE    Price to charge for access
+  --price PRICE    Price to charge for access (PYUSD)
   --wallet WALLET  Wallet address to receive payments
 ```
 
@@ -50,12 +51,12 @@ date: Fri, 17 Oct 2025 15:01:12 GMT
 x-openpayai-id: 0x76f3e01aff36f7ea119c74ff2687fae778c1aeb1709227857ecdf7884d66b3e1
 ```
 
-Using this identifier, the crawlers can then lookup the price for accessing the
+Using this identifier, the crawlers can then look up the price for accessing the
 content in the OpenPayAI smart contract and submit a purchase transaction.
 
 Once the purchase transaction is completed, the crawlers can request access to
 the now licensed content again, but this time using a `X-OpenPayAI-Verification`
-header. This header contains the base64 encocerd message
+header. This header contains the base64 encoded message
 "`<timestamp>,<identifier>`" along with a cryptographic signature.
 
 ```
@@ -67,7 +68,7 @@ header. This header contains the base64 encocerd message
 ```
 
 The content
-providing webserver verifies that all of the following critera are met:
+providing webserver verifies that all of the following criteria are met:
 
 - The signature is valid
 - The signer has purchased a license on-chain
@@ -152,7 +153,7 @@ cd contract
 npx hardhat run scripts/inject-pyusd.js
 ```
 
-### Deploy the Contract
+### Deploy the OpenPayAI Contract
 
 ```
 cd contract
@@ -190,7 +191,7 @@ Please summarize the story on the website http://localhost:8000/cat in one sente
 ```
 cd code
 source venv/bin/activate
-./openpayai_tool.py --price 0.01 --wallet 0xdAdaFaC167E4aEC1F40F71BBac7949c9Ee920F14 ../webroot/crane/
+./openpayai_tool.py --price 0.02 --wallet 0xdAdaFaC167E4aEC1F40F71BBac7949c9Ee920F14 ../webroot/crane/
 ```
 
 ### Verify OpenPayAI protection
@@ -198,6 +199,9 @@ source venv/bin/activate
 ```
 curl -I -H "User-Agent: AI-Agent-Crawler" http://localhost:8000/crane/
 ```
+
+Also verify that the website http://localhost:8000/crane is still viewable
+when visiting with a webbrowser.
 
 ### Check Balances Before
 

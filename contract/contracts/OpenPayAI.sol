@@ -1,22 +1,30 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 contract OpenPayAI {
     struct Entry {
         uint256 price;
         address dataOwner;
     }
     address public immutable owner;
+    IERC20 public immutable paymentToken;
     mapping(bytes32 => Entry) public entries;
     mapping(address => mapping(bytes32 => bool)) public licenses;
 
     event EntryAdded(bytes32 indexed hash, uint256 price, address dataOwner);
     event PriceUpdated(bytes32 indexed hash, uint256 newPrice);
-    event LicenseBought(address indexed buyer, bytes32 indexed hash);
+    event LicenseBought(
+        address indexed buyer,
+        bytes32 indexed hash,
+        uint256 price
+    );
     event Withdrawal(address indexed owner, uint256 amount);
 
-    constructor(address _owner) {
+    constructor(address _owner, address _paymentToken) {
         owner = _owner;
+        paymentToken = IERC20(_paymentToken);
     }
 
     modifier isOwner() {
@@ -49,17 +57,17 @@ contract OpenPayAI {
 
     function buyLicense(bytes32 hash) external payable {
         require(entries[hash].dataOwner != address(0), "Entry does not exist");
-        require(msg.value >= entries[hash].price, "Insufficient funds");
 
-        address dataOwner = entries[hash].dataOwner;
-        uint256 price = entries[hash].price;
+        Entry memory entry = entries[hash];
+        uint256 price = entry.price;
+        address dataOwner = entry.dataOwner;
 
-        (bool success, ) = dataOwner.call{value: price}("");
-        require(success, "Transfer failed");
+        bool success = paymentToken.transferFrom(msg.sender, dataOwner, price);
+        require(success, "Token transfer failed");
 
         licenses[msg.sender][hash] = true;
 
-        emit LicenseBought(msg.sender, hash);
+        emit LicenseBought(msg.sender, hash, price);
     }
 
     function updatePrice(
@@ -73,14 +81,11 @@ contract OpenPayAI {
         emit PriceUpdated(hash, newPrice);
     }
 
-    function withdraw() external isOwner {
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds to withdraw");
-
-        (bool success, ) = payable(owner).call{value: balance}("");
+    function withdraw(uint256 amount) external isOwner {
+        bool success = paymentToken.transfer(owner, amount);
         require(success, "Withdrawal failed");
 
-        emit Withdrawal(owner, balance);
+        emit Withdrawal(owner, amount);
     }
 
     receive() external payable {}

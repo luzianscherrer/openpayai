@@ -32,6 +32,10 @@ contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 account = web3.eth.account.from_key(PRIVATE_KEY)
 
 
+def to_token_units(amount_float: float, decimals: int = 6) -> int:
+    return int(amount_float * 10**decimals)
+
+
 def generate_openpayai(directory: str, price: float, wallet: str):
     path = Path(directory).resolve()
     if not path.exists() or not path.is_dir():
@@ -45,12 +49,12 @@ def generate_openpayai(directory: str, price: float, wallet: str):
     file_path.write_text(token, encoding="utf-8")
 
     tx = contract.functions.addEntry(
-        token, Web3.to_wei(price, "ether"), wallet
+        token, to_token_units(price, 6), wallet
     ).build_transaction(
         {
             "from": account.address,
             "nonce": web3.eth.get_transaction_count(account.address),
-            "gas": 300000,
+            "gas": 300_000,
             "gasPrice": web3.eth.gas_price,
         }
     )
@@ -60,7 +64,7 @@ def generate_openpayai(directory: str, price: float, wallet: str):
 
     print(f"Path: {file_path}")
     print(f"OpenPayAI identifier: {token}")
-    print(f"Price: {price}")
+    print(f"Price (PYUSD): {price}")
     print(f"Data owner: {wallet}")
     print(f"Transaction {receipt.transactionHash.hex()}")
 
@@ -74,7 +78,7 @@ def main():
         "--price",
         type=float,
         required=True,
-        help="Price to charge for access",
+        help="Price to charge for access (PYUSD)",
     )
     parser.add_argument(
         "--wallet", type=str, required=True, help="Wallet address to receive payments"

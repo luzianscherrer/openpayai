@@ -12,10 +12,31 @@ import base64
 load_dotenv()
 
 RPC_URL = "http://localhost:8545"
+PYUSD_ADDRESS = "0x6c3ea9036406852006290770BEdFcAbA0e23A0e8"
 PRIVATE_KEY = os.getenv("AI_AGENT_PRIVATE_KEY")
 ABI_PATH = "../contract/artifacts/contracts/OpenPayAI.sol/OpenPayAI.json"
 ADR_PATH = "../contract/ignition/deployments/chain-31337/deployed_addresses.json"
 OPENAI_KEY = os.environ["OPENAI_KEY"]
+
+ERC20_ABI = [
+    {
+        "constant": False,
+        "inputs": [
+            {"name": "_spender", "type": "address"},
+            {"name": "_value", "type": "uint256"},
+        ],
+        "name": "approve",
+        "outputs": [{"name": "", "type": "bool"}],
+        "type": "function",
+    },
+    {
+        "constant": True,
+        "inputs": [{"name": "_owner", "type": "address"}],
+        "name": "balanceOf",
+        "outputs": [{"name": "balance", "type": "uint256"}],
+        "type": "function",
+    },
+]
 
 with open(ABI_PATH, "r") as abi_file:
     contract_json = json.load(abi_file)
@@ -29,6 +50,9 @@ web3 = Web3(Web3.HTTPProvider(RPC_URL))
 assert web3.is_connected(), "Failed to connect to Ethereum node"
 contract = web3.eth.contract(address=CONTRACT_ADDRESS, abi=CONTRACT_ABI)
 account = web3.eth.account.from_key(PRIVATE_KEY)
+token = web3.eth.contract(
+    address=Web3.to_checksum_address(PYUSD_ADDRESS), abi=ERC20_ABI
+)
 
 
 @tool
@@ -76,12 +100,25 @@ def buy_access_to_website(identifier: str) -> str:
     """
     entry = contract.functions.entries(identifier).call()
     price = entry[0]
+
+    approve_tx = token.functions.approve(contract.address, price).build_transaction(
+        {
+            "from": account.address,
+            "nonce": web3.eth.get_transaction_count(account.address),
+            "gas": 100_000,
+            "gasPrice": web3.eth.gas_price,
+        }
+    )
+    signed_approve = web3.eth.account.sign_transaction(approve_tx, PRIVATE_KEY)
+    web3.eth.send_raw_transaction(signed_approve.raw_transaction)
+    web3.eth.wait_for_transaction_receipt(signed_approve.hash)
+    print(f"Approved {price} PYUSD for OpenPayAI contract")
+
     tx = contract.functions.buyLicense(identifier).build_transaction(
         {
             "from": account.address,
-            "value": price,
             "nonce": web3.eth.get_transaction_count(account.address),
-            "gas": 200000,
+            "gas": 300_000,
             "gasPrice": web3.eth.gas_price,
         }
     )
@@ -91,7 +128,7 @@ def buy_access_to_website(identifier: str) -> str:
         receipt = web3.eth.wait_for_transaction_receipt(tx_hash)
         gas_used = receipt["gasUsed"]
         print(
-            f"Bought OpenPayAI license for {Web3.from_wei(price, 'ether')} with transaction 0x{receipt.transactionHash.hex()} (used gas: {gas_used})"
+            f"Bought OpenPayAI license for {price / 10**6} PYUSD with transaction 0x{receipt.transactionHash.hex()} (used gas: {gas_used})"
         )
     except ContractLogicError as e:
         print(f"Transaction failed: {e}")
