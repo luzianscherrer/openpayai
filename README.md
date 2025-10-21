@@ -145,6 +145,13 @@ cd contract
 npx hardhat node
 ```
 
+### Deploy PYUSD and Mint Testing Balance
+
+```
+cd contract
+npx hardhat run scripts/inject-pyusd.js
+```
+
 ### Deploy the Contract
 
 ```
@@ -192,12 +199,28 @@ source venv/bin/activate
 curl -I -H "User-Agent: AI-Agent-Crawler" http://localhost:8000/crane/
 ```
 
+### Check Balances Before
+
+```
+cd code
+source venv/bin/activate
+python check_pyusd_balances.py
+```
+
 ### Ask AI Agent for Summary of OpenPayAI-enabled URL
 
 Prompt:
 
 ```
 Please summarize the story on the website http://localhost:8000/crane in one sentence
+```
+
+### Check Balances After
+
+```
+cd code
+source venv/bin/activate
+python check_pyusd_balances.py
 ```
 
 ## Other Useful Commands
