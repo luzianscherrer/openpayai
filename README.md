@@ -2,11 +2,21 @@
 
 ## Introduction
 
-Content providers face a growing dilemma: they want their websites to remain open and discoverable by traditional search crawlers, yet they don’t want to give away their content for free to AI crawlers that scrape data for training and retrieval-augmented generation purposes.
+Content providers face a growing dilemma: they want their websites to remain
+open and discoverable by traditional search crawlers, yet they don’t want to
+give away their content for free to AI crawlers that scrape data for training
+and retrieval-augmented generation purposes.
 
-In July 2025, Cloudflare introduced a [pay-per-crawl](https://blog.cloudflare.com/introducing-pay-per-crawl/) model, allowing **content providers to charge AI crawlers** via micropayments while keeping access open for other uses. However, their payment solution is centralized and monopolistic.
+In July 2025, the
+[pay-per-crawl](https://blog.cloudflare.com/introducing-pay-per-crawl/) model
+has been introduced, allowing **content providers to charge AI crawlers** via
+micropayments while keeping access open for other uses. However, this payment
+solution is centralized and monopolistic.
 
-**OpenPayAI** is a proof of concept that takes this idea further by creating a decentralized alternative. Payments for access are handled transparently on a public blockchain, making the system **trustless, open, and permissionless** — anyone can participate without relying on a single gatekeeper.
+**OpenPayAI** is a proof of concept that takes this idea further by creating a
+decentralized alternative. Payments for access are handled transparently on a
+public blockchain, making the system **trustless, open, and permissionless** —
+anyone can participate without relying on a single gatekeeper.
 
 ## ETHOnline Hackathon
 
@@ -14,9 +24,9 @@ This project is my contribution to the [ETHOnline 2025 Hackathon](https://ethglo
 
 ### Used Sponsor Technology
 
-- PayPal: [PYUSD](https://github.com/paxosglobal/pyusd-contract) - Stable license prices independent of volatile cryptocurrency exchange rates.
-- Nomic Foundation: [Hardhat 3](https://hardhat.org) - State of the art Solidity development.
-- Blockscout: [Autoscout](https://deploy.blockscout.com) - Observe and verify what is happening on-chain.
+- PayPal: [PYUSD](https://github.com/paxosglobal/pyusd-contract) - Used for stable license prices independent of volatile cryptocurrency exchange rates.
+- Nomic Foundation: [Hardhat 3](https://hardhat.org) - Used for state of the art Solidity development.
+- Blockscout: [Autoscout](https://deploy.blockscout.com) - Used to observe and verify what is happening on-chain.
 
 ## Technical Description
 
@@ -28,12 +38,12 @@ usage: openpayai_tool.py [-h] --price PRICE --wallet WALLET directory
 Enable OpenPayAI for a given directory
 
 positional arguments:
-  directory        Target directory to enable for OpenPayAI
+  directory        target directory to enable for OpenPayAI
 
 options:
   -h, --help       show this help message and exit
-  --price PRICE    Price to charge for access (PYUSD)
-  --wallet WALLET  Wallet address to receive payments
+  --price PRICE    price to charge for access (PYUSD)
+  --wallet WALLET  wallet address to receive payments
 ```
 
 This writes a unique identifier to the directory on the webserver in a file
@@ -54,8 +64,11 @@ x-openpayai-id: 0x76f3e01aff36f7ea119c74ff2687fae778c1aeb1709227857ecdf7884d66b3
 Using this identifier, the crawlers can then look up the price for accessing the
 content in the OpenPayAI smart contract and submit a purchase transaction.
 
-Once the purchase transaction is completed, the crawlers can request access to
-the now licensed content again, but this time using a `X-OpenPayAI-Verification`
+The OpenPayAI smart contract ensures that the content owner’s wallet is
+automatically credited with the set price as soon as the transaction executes.
+
+Once the transaction is completed, the crawlers can again request access to
+the now licensed content, but this time using a `X-OpenPayAI-Verification`
 header. This header contains the base64 encoded message
 "`<timestamp>,<identifier>`" along with a cryptographic signature.
 
@@ -76,10 +89,6 @@ providing webserver verifies that all of the following criteria are met:
 - The timestamp is within 5 minutes of the current time (in order to prevent replay misuse)
 
 If all checks are valid, the licensed content is returned to the crawler.
-
-Ensured by the OpenPayAI smart contract, the content owner's wallet was already
-automatically credited with the set price when the crawler did execute the
-purchase transaction on-chain.
 
 ## Development Setup
 

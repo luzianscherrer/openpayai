@@ -73,15 +73,15 @@ def main():
     parser = argparse.ArgumentParser(
         description="Enable OpenPayAI for a given directory"
     )
-    parser.add_argument("directory", help="Target directory to enable for OpenPayAI")
+    parser.add_argument("directory", help="target directory to enable for OpenPayAI")
     parser.add_argument(
         "--price",
         type=float,
         required=True,
-        help="Price to charge for access (PYUSD)",
+        help="price to charge for access (PYUSD)",
     )
     parser.add_argument(
-        "--wallet", type=str, required=True, help="Wallet address to receive payments"
+        "--wallet", type=str, required=True, help="wallet address to receive payments"
     )
     args = parser.parse_args()
 
