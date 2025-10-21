@@ -19,8 +19,12 @@ const pyusd = await viem.getContractAt("MockPYUSD", PYUSD_ADDRESS, {
   client: walletClient,
 });
 
-const recipient = "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199";
 const decimals = 6n;
+const initialSupply = 0;
+await pyusd.write.initialize([initialSupply, walletClient.account.address]);
+console.log(`MockPYUSD initialized with ${initialSupply} PYUSD`);
+
+const recipient = "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199";
 const amount = 100n * 10n ** decimals;
 await pyusd.write.mint([recipient, amount]);
 
