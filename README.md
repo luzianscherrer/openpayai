@@ -90,6 +90,11 @@ providing webserver verifies that all of the following criteria are met:
 
 If all checks are valid, the licensed content is returned to the crawler.
 
+## Deployment
+
+A live version of the contract is deployed on Ethereum Sepolia at the
+address [0xB957e8979B37D316085d9aa4a55511d8F60383ad](https://sepolia.etherscan.io/address/0xB957e8979B37D316085d9aa4a55511d8F60383ad#code).
+
 ## Development Setup
 
 ### Directory Structure
