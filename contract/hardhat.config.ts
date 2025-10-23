@@ -5,6 +5,8 @@ import { configVariable } from "hardhat/config";
 
 import "@nomicfoundation/hardhat-ethers";
 
+import "dotenv/config";
+
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
   solidity: {
