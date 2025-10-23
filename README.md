@@ -93,7 +93,10 @@ If all checks are valid, the licensed content is returned to the crawler.
 ## Deployment
 
 A live version of the contract is deployed on Ethereum Sepolia at the
-address [0xB957e8979B37D316085d9aa4a55511d8F60383ad](https://sepolia.etherscan.io/address/0xB957e8979B37D316085d9aa4a55511d8F60383ad#code).
+address `0xB957e8979B37D316085d9aa4a55511d8F60383ad`:
+
+- [Verify 0xB957e8979B37D316085d9aa4a55511d8F60383ad on Blockscout](https://eth-sepolia.blockscout.com/address/0xB957e8979B37D316085d9aa4a55511d8F60383ad?tab=contract)
+- [Verify 0xB957e8979B37D316085d9aa4a55511d8F60383ad on Etherscan](https://sepolia.etherscan.io/address/0xB957e8979B37D316085d9aa4a55511d8F60383ad#code)
 
 ## Development Setup
 
